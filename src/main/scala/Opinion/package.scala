@@ -43,4 +43,27 @@ package object Opinion {
     }
   }
 
+  def confBiasUpdate(sb: SpecificBelief, swg: SpecificWeightedGraph): SpecificBelief = {
+    val (wg, n) = swg
+    Vector.tabulate(n) { i =>
+      val effectiveWeights = Vector.tabulate(n) { j =>
+        wg(i, j) * (1.0 - math.abs(sb(i) - sb(j)))
+      }
+      val totalWeight = effectiveWeights.sum
+      if (totalWeight == 0.0) sb(i)
+      else
+        effectiveWeights.zipWithIndex
+          .map { case (w, j) => w * sb(j) }
+          .sum / totalWeight
+    }
+  }
+  def  simulate(fu: FunctionUpdate,
+                swg: SpecificWeightedGraph,
+                b0: SpecificBelief,
+                t:Int):
+  IndexedSeq[SpecificBelief] ={
+    (1 to t).scanLeft(b0){(concurrentBelief,_) => fu(concurrentBelief,swg)}
+
+
+  }
 }
