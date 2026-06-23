@@ -1,4 +1,5 @@
 import Comete._
+import scala.collection.parallel.CollectionConverters._
 
 package object Opinion {
 
@@ -64,6 +65,30 @@ package object Opinion {
   IndexedSeq[SpecificBelief] ={
     (1 to t).scanLeft(b0){(concurrentBelief,_) => fu(concurrentBelief,swg)}
 
-
   }
+
+  //Versiones Paralelas
+
+  def rhoPar(alpha: Double, beta: Double): AgentsPolMeasure ={
+
+    val medida = normalizar(rhoCMT_Gen(alpha, beta))
+    (sb: SpecificBelief, dist: DistributionValues) => {
+      val k = dist.length
+      val n = sb.length
+
+      val lims = Vector.tabulate(k) { i =>
+        if (i == 0) 0.0
+        else (dist(i - 1) + dist(i)) / 2.0
+      }
+
+      val freq: Frequency = (0 until k).par.map { i =>
+        val lo = lims(i)
+        val hi = if (i == k - 1) 1.0 + 1e-9 else lims(i + 1)
+        sb.count(b => b >= lo && b < hi).toDouble / n.toDouble
+      }.toVector
+
+      medida((freq, dist))
+    }
+  }
+
 }
