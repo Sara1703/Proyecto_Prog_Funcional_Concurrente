@@ -43,4 +43,39 @@ package object Opinion {
     }
   }
 
+  // Build uniform belief state.
+  def uniformBelief(nags: Int): SpecificBelief = {
+    Vector.tabulate(nags)((i: Int) => (i + 1).toDouble / nags.toDouble)
+  }
+
+  // Builds mildly polarized belief state
+  def midlyBelief(nags: Int): SpecificBelief = {
+    val middle = nags / 2
+    Vector.tabulate(nags)((i: Int) =>
+      if (i < middle) math.max(0.25 - 0.01 * (middle - i - 1), 0)
+      else math.min(0.75 - 0.01 * (middle - i), 1))
+  }
+
+  // Builds extreme polarized belief state
+  def allExtremeBelief(nags: Int): SpecificBelief = {
+    val middle = nags / 2
+    Vector.tabulate(nags)((i: Int) =>
+      if (i < middle) 0.0 else 1.0)
+  }
+
+  // Builds three-pole belief state
+  def allTripleBelief(nags: Int): SpecificBelief = {
+    val oneThird = nags / 3
+    val twoThird = (nags / 3) * 2
+    Vector.tabulate(nags)((i: Int) =>
+      if (i < oneThird) 0.0
+      else if (i >= twoThird) 1.0
+      else 0.5)
+  }
+
+  // Builds consensus belief state
+  def consensusBelief(b: Double)(nags: Int): SpecificBelief = {
+    Vector.tabulate(nags)((i: Int) => b)
+  }
+
 }
