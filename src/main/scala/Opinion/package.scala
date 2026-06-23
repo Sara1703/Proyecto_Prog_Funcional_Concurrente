@@ -1,4 +1,5 @@
 import Comete._
+import scala.collection.parallel.CollectionConverters._
 
 package object Opinion {
 
@@ -43,39 +44,51 @@ package object Opinion {
     }
   }
 
-  // Build uniform belief state.
-  def uniformBelief(nags: Int): SpecificBelief = {
-    Vector.tabulate(nags)((i: Int) => (i + 1).toDouble / nags.toDouble)
+  def confBiasUpdate(sb: SpecificBelief, swg: SpecificWeightedGraph): SpecificBelief = {
+    val (wg, n) = swg
+    Vector.tabulate(n) { i =>
+      val effectiveWeights = Vector.tabulate(n) { j =>
+        wg(i, j) * (1.0 - math.abs(sb(i) - sb(j)))
+      }
+      val totalWeight = effectiveWeights.sum
+      if (totalWeight == 0.0) sb(i)
+      else
+        effectiveWeights.zipWithIndex
+          .map { case (w, j) => w * sb(j) }
+          .sum / totalWeight
+    }
+  }
+  def  simulate(fu: FunctionUpdate,
+                swg: SpecificWeightedGraph,
+                b0: SpecificBelief,
+                t:Int):
+  IndexedSeq[SpecificBelief] ={
+    (1 to t).scanLeft(b0){(concurrentBelief,_) => fu(concurrentBelief,swg)}
+
   }
 
-  // Builds mildly polarized belief state
-  def midlyBelief(nags: Int): SpecificBelief = {
-    val middle = nags / 2
-    Vector.tabulate(nags)((i: Int) =>
-      if (i < middle) math.max(0.25 - 0.01 * (middle - i - 1), 0)
-      else math.min(0.75 - 0.01 * (middle - i), 1))
-  }
+  //Versiones Paralelas
 
-  // Builds extreme polarized belief state
-  def allExtremeBelief(nags: Int): SpecificBelief = {
-    val middle = nags / 2
-    Vector.tabulate(nags)((i: Int) =>
-      if (i < middle) 0.0 else 1.0)
-  }
+  def rhoPar(alpha: Double, beta: Double): AgentsPolMeasure ={
 
-  // Builds three-pole belief state
-  def allTripleBelief(nags: Int): SpecificBelief = {
-    val oneThird = nags / 3
-    val twoThird = (nags / 3) * 2
-    Vector.tabulate(nags)((i: Int) =>
-      if (i < oneThird) 0.0
-      else if (i >= twoThird) 1.0
-      else 0.5)
-  }
+    val medida = normalizar(rhoCMT_Gen(alpha, beta))
+    (sb: SpecificBelief, dist: DistributionValues) => {
+      val k = dist.length
+      val n = sb.length
 
-  // Builds consensus belief state
-  def consensusBelief(b: Double)(nags: Int): SpecificBelief = {
-    Vector.tabulate(nags)((i: Int) => b)
+      val lims = Vector.tabulate(k) { i =>
+        if (i == 0) 0.0
+        else (dist(i - 1) + dist(i)) / 2.0
+      }
+
+      val freq: Frequency = (0 until k).par.map { i =>
+        val lo = lims(i)
+        val hi = if (i == k - 1) 1.0 + 1e-9 else lims(i + 1)
+        sb.count(b => b >= lo && b < hi).toDouble / n.toDouble
+      }.toVector
+
+      medida((freq, dist))
+    }
   }
 
 }
