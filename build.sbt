@@ -19,6 +19,8 @@ lazy val root = project
       "org.scala-lang.modules" %% "scala-parallel-collections" % "1.0.4",
       
       
-      ("com.storm-enroute" %% "scalameter-core" % "0.21").cross(CrossVersion.for3Use2_13)
+      ("com.storm-enroute" %% "scalameter-core" % "0.21").cross(CrossVersion.for3Use2_13),
+
+      ("org.plotly-scala" %% "plotly-render" % "0.8.2").cross(CrossVersion.for3Use2_13)
     )
   )
