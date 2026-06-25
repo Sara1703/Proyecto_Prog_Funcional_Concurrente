@@ -83,11 +83,11 @@ package object Opinion {
 
       val sbPar = sb.par
 
-      val freq: Frequency = Vector.tabulate(k) { i =>
+      val freq: Frequency = (0 until k).toVector.par.map { i =>
         val lo = lims(i)
         val hi = if (i == k - 1) 1.0 + 1e-9 else lims(i + 1)
         sbPar.count(b => b >= lo && b < hi).toDouble / n.toDouble
-      }
+      }.seq
 
       medida((freq, dist))
     }
