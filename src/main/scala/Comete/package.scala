@@ -1,4 +1,4 @@
-package  object Comete {
+package object Comete {
     type DistributionValues = Vector[Double]
     type Frequency = Vector[Double]
     type Distribution = (Frequency, DistributionValues)
@@ -24,7 +24,7 @@ package  object Comete {
       //función auxiliar para calcular ρ_aux(p)
       def rhoAux( p:Double, dist:Distribution): Double = {
         val (pi,y) = dist
-        (y zip pi).map
+        (pi zip y).map
           { case (pi_,y_) =>
             Math.pow(pi_, alpha) * Math.pow(Math.abs(y_ - p), beta)
             }.sum
