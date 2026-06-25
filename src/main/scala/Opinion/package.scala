@@ -81,13 +81,25 @@ package object Opinion {
         else (dist(i - 1) + dist(i)) / 2.0
       }
 
-      val sbPar = sb.par
+      val indiceI = (0 until k).toVector
 
-      val freq: Frequency = (0 until k).toVector.par.map { i =>
+      def calcularFrecuenciaGrupo(indices: Vector[Int]): Vector[Double] = indices.map {{ i =>
         val lo = lims(i)
         val hi = if (i == k - 1) 1.0 + 1e-9 else lims(i + 1)
-        sbPar.count(b => b >= lo && b < hi).toDouble / n.toDouble
-      }.seq
+        sb.count(b => b >= lo && b < hi).toDouble / n.toDouble
+        }
+      }
+
+      val mitad = k/2
+
+      val(indicesP1, indicesP2) = indiceI.splitAt(mitad)
+
+      val(mitad1, mitad2) =common.parallel(
+        calcularFrecuenciaGrupo(indicesP1),
+        calcularFrecuenciaGrupo(indicesP2)
+      )
+
+      val freq: Frequency = mitad1 ++ mitad2
 
       medida((freq, dist))
     }
