@@ -1,5 +1,8 @@
 val scala3Version = "2.13.1"
 
+// Opciones del compilador de la imagen
+scalacOptions ++= Seq("-language:implicitConversions", "-deprecation")
+
 lazy val root = project
   .in(file("."))
   .settings(
@@ -8,5 +11,16 @@ lazy val root = project
 
     scalaVersion := scala3Version,
 
-    libraryDependencies += "org.scalameta" %% "munit" % "1.3.2" % Test
+    libraryDependencies ++= Seq(
+      
+      "org.scalameta" %% "munit" % "1.3.2" % Test,
+      
+      
+      "org.scala-lang.modules" %% "scala-parallel-collections" % "1.0.4",
+      
+      
+      ("com.storm-enroute" %% "scalameter-core" % "0.21").cross(CrossVersion.for3Use2_13),
+
+      ("org.plotly-scala" %% "plotly-render" % "0.8.2").cross(CrossVersion.for3Use2_13)
+    )
   )
