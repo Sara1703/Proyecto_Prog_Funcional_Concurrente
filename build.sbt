@@ -1,4 +1,4 @@
-val scala3Version = "2.13.1"
+val scala3Version = "2.13.12"
 
 // Opciones del compilador de la imagen
 scalacOptions ++= Seq("-language:implicitConversions", "-deprecation")
