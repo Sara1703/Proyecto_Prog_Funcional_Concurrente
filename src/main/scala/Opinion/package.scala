@@ -87,7 +87,7 @@ package object Opinion {
         val lo = lims(i)
         val hi = if (i == k - 1) 1.0 + 1e-9 else lims(i + 1)
         sb.count(b => b >= lo && b < hi).toDouble / n.toDouble
-        }
+      }
       }
 
       val mitad = k/2
@@ -105,4 +105,24 @@ package object Opinion {
     }
   }
 
+  def confBiasUpdatePar(b:SpecificBelief, swg: SpecificWeightedGraph): SpecificBelief = {
+    val (wg, n) = swg
+
+    //cada agente i calcula su nueva creencia en paralelo
+    (0 until n).par.map { i =>
+
+      // los pesos de cada j se calculan en paralelo
+      val effectiveWeights = (0 until n).par.map { j =>
+        wg(i, j) * (1.0 - math.abs(b(i) - b(j)))
+      }.toVector
+
+      val totalWeight = effectiveWeights.sum
+      if (totalWeight == 0.0) b(i)
+      else
+        effectiveWeights.zipWithIndex
+          .map { case (w, j) => w * b(j) }
+          .sum / totalWeight
+
+    }.toVector
+  }
 }

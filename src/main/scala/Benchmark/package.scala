@@ -109,7 +109,7 @@ package object Benchmark {
 
   // Simulador de evolución de opinión
   def simEvolucion(sb:Seq[SpecificBelief],swg:SpecificWeightedGraph,
-                    tiempoSim:Int, pol:AgentsPolMeasure, fu:FunctionUpdate,
+                   tiempoSim:Int, pol:AgentsPolMeasure, fu:FunctionUpdate,
                    dist:DistributionValues,name:String) = {
     // Recibe una secuencia de opiniones iniciales de agentes sb,
     // todas las opiniones del mismo tamaño, un grafo de influencia swg,
