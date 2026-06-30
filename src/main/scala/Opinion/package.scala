@@ -35,7 +35,6 @@ package object Opinion {
     }
   }
 
-  //TODO INFORME
   def showWeightedGraph(swg: SpecificWeightedGraph): IndexedSeq[IndexedSeq[Double]] = {
     val (wg, n) = swg
     Vector.tabulate(n) { i =>
@@ -45,7 +44,6 @@ package object Opinion {
     }
   }
 
-  //TODO INFORME
   def confBiasUpdate(sb: SpecificBelief, swg: SpecificWeightedGraph): SpecificBelief = {
     val (wg, n) = swg
     Vector.tabulate(n) { i =>
@@ -60,8 +58,6 @@ package object Opinion {
           .sum / totalWeight
     }
   }
-
-
   def  simulate(fu: FunctionUpdate,
                 swg: SpecificWeightedGraph,
                 b0: SpecificBelief,
@@ -70,6 +66,7 @@ package object Opinion {
     (1 to t).scanLeft(b0){(concurrentBelief,_) => fu(concurrentBelief,swg)}
 
   }
+
 
   //Versiones Paralelas
 
@@ -103,12 +100,12 @@ package object Opinion {
         calcularFrecuenciaGrupo(indicesP2)
       )
 
-      val freq: Frequency = mitad1 ++ mitad2
+      val freqParallel: Frequency = mitad1 ++ mitad2
 
-      medida((freq, dist))
+      medida((freqParallel, dist))
     }
   }
-//TODO INFORME
+
   def confBiasUpdatePar(b:SpecificBelief, swg: SpecificWeightedGraph): SpecificBelief = {
     val (wg, n) = swg
 
