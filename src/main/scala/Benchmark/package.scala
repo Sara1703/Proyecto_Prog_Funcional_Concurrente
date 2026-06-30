@@ -87,6 +87,14 @@ package object Benchmark {
     } yield (b.length, p1, p2, t1, t2, t1.value/t2.value)
   }
 
+  
+
+
+
+
+
+
+
   // Comparador de tiempos de funciones de actualizacion secuencial y paralela
   def compararFuncionesAct(sb:Seq[SpecificBelief], swg:SpecificWeightedGraph,
                            f1:FunctionUpdate, f2:FunctionUpdate) = {

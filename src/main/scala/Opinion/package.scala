@@ -35,6 +35,7 @@ package object Opinion {
     }
   }
 
+  //TODO INFORME
   def showWeightedGraph(swg: SpecificWeightedGraph): IndexedSeq[IndexedSeq[Double]] = {
     val (wg, n) = swg
     Vector.tabulate(n) { i =>
@@ -44,6 +45,7 @@ package object Opinion {
     }
   }
 
+  //TODO INFORME
   def confBiasUpdate(sb: SpecificBelief, swg: SpecificWeightedGraph): SpecificBelief = {
     val (wg, n) = swg
     Vector.tabulate(n) { i =>
@@ -58,6 +60,8 @@ package object Opinion {
           .sum / totalWeight
     }
   }
+
+
   def  simulate(fu: FunctionUpdate,
                 swg: SpecificWeightedGraph,
                 b0: SpecificBelief,
@@ -104,7 +108,7 @@ package object Opinion {
       medida((freq, dist))
     }
   }
-
+//TODO INFORME
   def confBiasUpdatePar(b:SpecificBelief, swg: SpecificWeightedGraph): SpecificBelief = {
     val (wg, n) = swg
 
