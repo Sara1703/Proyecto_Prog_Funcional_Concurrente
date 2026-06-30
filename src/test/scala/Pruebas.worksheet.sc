@@ -94,7 +94,24 @@ val  cmp1 = compararMedidasPol(sbms,likert5,polSec,polPar)
 println(cmp1)
 
 
-val i1_32768=i1 (32768)
-val i2_32768=i2 (32768)
-compararFuncionesAct ( sbms . take ( sbms . length /2) ,
-  i2_32768 , confBiasUpdate , confBiasUpdatePar )
+//
+val nAgentes = 32768
+val grafoI1 = i1(nAgentes)
+val grafoI2 = i2(nAgentes)
+
+val creenciaI1 :Seq[SpecificBelief] = Vector(allTripleBelief(nAgentes))
+val creenciaI2 :Seq[SpecificBelief] = Vector(allTripleBelief(nAgentes))
+
+compararFuncionesAct(
+    creenciaI1.take(creenciaI1.length/2),
+    grafoI1,
+    confBiasUpdate,
+    confBiasUpdatePar
+)
+
+compararFuncionesAct(
+    creenciaI2.take(creenciaI2.length/2),
+    grafoI2,
+    confBiasUpdate,
+    confBiasUpdatePar
+)
