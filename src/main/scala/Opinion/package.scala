@@ -67,7 +67,6 @@ package object Opinion {
 
   }
 
-
   //Versiones Paralelas
 
   def rhoPar(alpha: Double, beta: Double): AgentsPolMeasure ={
@@ -126,4 +125,5 @@ package object Opinion {
 
     }.toVector
   }
+
 }
