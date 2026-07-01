@@ -94,7 +94,6 @@ val  cmp1 = compararMedidasPol(sbms,likert5,polSec,polPar)
 println(cmp1)
 
 
-val i1_32768=i1 (32768)
-val i2_32768=i2 (32768)
-compararFuncionesAct ( sbms . take ( sbms . length /2) ,
-  i2_32768 , confBiasUpdate , confBiasUpdatePar )
+val i1_32768 = i1(32768)
+val i2_32768 = i2(32768)
+compararFuncionesAct(sbms.take(sbms.length/2),i2_32768,confBiasUpdate,confBiasUpdatePar)
