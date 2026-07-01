@@ -35,7 +35,6 @@ package object Opinion {
     }
   }
 
-  //TODO INFORME
   def showWeightedGraph(swg: SpecificWeightedGraph): IndexedSeq[IndexedSeq[Double]] = {
     val (wg, n) = swg
     Vector.tabulate(n) { i =>
@@ -44,22 +43,6 @@ package object Opinion {
       }
     }
   }
-
-//  //TODO este es la primera version
-//  def confBiasUpdate(sb: SpecificBelief, swg: SpecificWeightedGraph): SpecificBelief = {
-//    val (wg, n) = swg
-//    Vector.tabulate(n) { i =>
-//      val effectiveWeights = Vector.tabulate(n) { j =>
-//        wg(i, j) * (1.0 - math.abs(sb(i) - sb(j)))
-//      }
-//      val totalWeight = effectiveWeights.sum
-//      if (totalWeight == 0.0) sb(i)
-//      else
-//        effectiveWeights.zipWithIndex
-//          .map { case (w, j) => w * sb(j) }
-//          .sum / totalWeight
-//    }
-//  }
 
   def confBiasUpdate(sb: SpecificBelief, swg: SpecificWeightedGraph): SpecificBelief = {
     val (wg, _) = swg // ignoramos el n del grafo
@@ -76,8 +59,6 @@ package object Opinion {
           .sum / totalWeight
     }
   }
-
-
   def  simulate(fu: FunctionUpdate,
                 swg: SpecificWeightedGraph,
                 b0: SpecificBelief,
@@ -119,39 +100,14 @@ package object Opinion {
         calcularFrecuenciaGrupo(indicesP2)
       )
 
-      val freq: Frequency = mitad1 ++ mitad2
+      val freqParallel: Frequency = mitad1 ++ mitad2
 
-      medida((freq, dist))
+      medida((freqParallel, dist))
     }
   }
-//TODO esta es la priemra version
 
-//  def confBiasUpdatePar(b:SpecificBelief, swg: SpecificWeightedGraph): SpecificBelief = {
-//    val (wg, n) = swg
-//
-//    //cada agente i calcula su nueva creencia en paralelo
-//    (0 until n).par.map { i =>
-//
-//      // los pesos de cada j se calculan en paralelo
-//      val effectiveWeights = (0 until n).par.map { j =>
-//        wg(i, j) * (1.0 - math.abs(b(i) - b(j)))
-//      }.toVector
-//
-//      val totalWeight = effectiveWeights.sum
-//      if (totalWeight == 0.0) b(i)
-//      else
-//        effectiveWeights.zipWithIndex
-//          .map { case (w, j) => w * b(j) }
-//          .sum / totalWeight
-//
-//    }.toVector
-//  }
-
-
-  // Versión paralela
-  def confBiasUpdatePar(b: SpecificBelief, swg: SpecificWeightedGraph): SpecificBelief = {
-    val (wg, _) = swg
-    val n = b.length
+  def confBiasUpdatePar(b:SpecificBelief, swg: SpecificWeightedGraph): SpecificBelief = {
+    val (wg, n) = swg
 
     (0 until n).par.map { i =>
       val effectiveWeights = (0 until n).par.map { j =>
@@ -166,6 +122,5 @@ package object Opinion {
           .sum / totalWeight
     }.toVector
   }
-
 
 }

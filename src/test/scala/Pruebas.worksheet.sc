@@ -82,7 +82,18 @@ cmt1_norm ( pi_cons_der , likert5 )
 cmt1_norm ( pi_cons_izq , likert5 )
 
 
+//pruebas confBiasUpdate
 
+val i1_10=i1 (10)
+val i2_10=i2 (10)
+val i1_20=i1 (20)
+val i2_20=i2 (20)
+
+val sbu_10 = uniformBelief(10)
+val sbm_10 = midlyBelief(10)
+confBiasUpdate(sbu_10, i1_10)
+rho1(sbu_10,dist1)
+confBiasUpdate(sbm_10, i1_10)
 
 val  sbms = for {
   n <-2 until 16
@@ -94,6 +105,7 @@ val  cmp1 = compararMedidasPol(sbms,likert5,polSec,polPar)
 println(cmp1)
 
 
-val i1_32768 = i1(32768)
-val i2_32768 = i2(32768)
-compararFuncionesAct(sbms.take(sbms.length/2),i2_32768,confBiasUpdate,confBiasUpdatePar)
+val i1_32768 = i1 (32768)
+val i2_32768 = i2 (32768)
+
+compararFuncionesAct(sbms.take(sbms.length/2), i2_32768, confBiasUpdate, confBiasUpdatePar)
