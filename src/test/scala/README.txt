@@ -58,3 +58,12 @@ actualización inyectada.
 
 //INSTRUCCIONES DE EJECUCIÓN PARA EL ENTORNO INTELLIJIDEA// ----------------------------------------------------------------------------------------------------------------
 
+*Paso 1 (inicializar interfaz): sbt
+
+*Paso 2 (Limpieza y compilación de módulos): 
+clean
+compile
+
+*Paso 3 (Ejecución pruebas comparativas de rendimiento):
+
+run

@@ -101,9 +101,9 @@ package object Opinion {
         calcularFrecuenciaGrupo(indicesP2)
       )
 
-      val freqParallel: Frequency = mitad1 ++ mitad2
+      val freq: Frequency = mitad1 ++ mitad2
 
-      medida((freqParallel, dist))
+      medida((freq, dist))
     }
   }
 
