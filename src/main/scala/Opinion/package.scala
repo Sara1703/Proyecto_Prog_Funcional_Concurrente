@@ -45,7 +45,8 @@ package object Opinion {
   }
 
   def confBiasUpdate(sb: SpecificBelief, swg: SpecificWeightedGraph): SpecificBelief = {
-    val (wg, n) = swg
+    val (wg, _) = swg // ignoramos el n del grafo
+    val n = sb.length // el número real de agentes es el de la creencia
     Vector.tabulate(n) { i =>
       val effectiveWeights = Vector.tabulate(n) { j =>
         wg(i, j) * (1.0 - math.abs(sb(i) - sb(j)))
@@ -108,10 +109,7 @@ package object Opinion {
   def confBiasUpdatePar(b:SpecificBelief, swg: SpecificWeightedGraph): SpecificBelief = {
     val (wg, n) = swg
 
-    //cada agente i calcula su nueva creencia en paralelo
     (0 until n).par.map { i =>
-
-      // los pesos de cada j se calculan en paralelo
       val effectiveWeights = (0 until n).par.map { j =>
         wg(i, j) * (1.0 - math.abs(b(i) - b(j)))
       }.toVector
@@ -122,7 +120,6 @@ package object Opinion {
         effectiveWeights.zipWithIndex
           .map { case (w, j) => w * b(j) }
           .sum / totalWeight
-
     }.toVector
   }
 
