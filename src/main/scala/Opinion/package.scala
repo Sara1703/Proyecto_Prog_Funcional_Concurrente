@@ -44,6 +44,7 @@ package object Opinion {
     }
   }
 
+  // Versión secuencial
   def confBiasUpdate(sb: SpecificBelief, swg: SpecificWeightedGraph): SpecificBelief = {
     val (wg, _) = swg // ignoramos el n del grafo
     val n = sb.length // el número real de agentes es el de la creencia
@@ -106,8 +107,10 @@ package object Opinion {
     }
   }
 
-  def confBiasUpdatePar(b:SpecificBelief, swg: SpecificWeightedGraph): SpecificBelief = {
-    val (wg, n) = swg
+  // Versión paralela
+  def confBiasUpdatePar(b: SpecificBelief, swg: SpecificWeightedGraph): SpecificBelief = {
+    val (wg, _) = swg
+    val n = b.length
 
     (0 until n).par.map { i =>
       val effectiveWeights = (0 until n).par.map { j =>
