@@ -108,4 +108,8 @@ println(cmp1)
 val i1_32768 = i1 (32768)
 val i2_32768 = i2 (32768)
 
-compararFuncionesAct(sbms.take(sbms.length/2), i2_32768, confBiasUpdate, confBiasUpdatePar)
+val cmp2 = compararFuncionesAct(sbms.take(10), i2_32768, confBiasUpdate, confBiasUpdatePar)
+
+cmp2.foreach { case (n, t1, t2, speedup) =>
+  println(f"n=$n%6d | t1=$t1 | t2=$t2 | speedup=$speedup%.4f")
+}

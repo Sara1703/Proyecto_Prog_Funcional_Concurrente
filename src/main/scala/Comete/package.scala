@@ -38,14 +38,26 @@ package object Comete {
       }
     }
 
-    def normalizar(m:MedidaPol): MedidaPol= {
-      //se define el peor caso
-      val pi_PeorCaso = Vector(0.5,0.0,0.0,0.0,0.5)
-      val y = Vector(0.0,0.25,0.5,0.75,1.0)
-      val PeorCaso = m(pi_PeorCaso,y)
+  def normalizar(m:MedidaPol): MedidaPol = {
 
-      // Se retorna la función MedidaPol que divide por el peor caso
-      (dist:Distribution) => { m(dist) / PeorCaso }
+    // Construye el peor caso dinámicamente según k = y.length
+    def construirPeorCaso(k: Int): Distribution = {
+      val y = if (k == 1) Vector(0.0)
+      else Vector.tabulate(k)(i => i.toDouble / (k - 1))
+
+      val pi = if (k == 1) Vector(1.0)
+      else Vector.tabulate(k)(i => if (i == 0 || i == k - 1) 0.5 else 0.0)
+
+      (pi, y)
     }
+
+    // Se retorna la función MedidaPol que divide por el peor caso
+    (dist: Distribution) => {
+      val (_, y) = dist
+      val k = y.length
+      val peorCaso = construirPeorCaso(k)
+      m(dist) / m(peorCaso)
+    }
+  }
 }
 
