@@ -1,4 +1,5 @@
 import Comete._
+import scala.collection.parallel.CollectionConverters._
 
 package object Opinion {
 
@@ -43,39 +44,86 @@ package object Opinion {
     }
   }
 
-  // Build uniform belief state.
-  def uniformBelief(nags: Int): SpecificBelief = {
-    Vector.tabulate(nags)((i: Int) => (i + 1).toDouble / nags.toDouble)
+  // Versión secuencial
+  def confBiasUpdate(sb: SpecificBelief, swg: SpecificWeightedGraph): SpecificBelief = {
+    val (wg, _) = swg // ignoramos el n del grafo
+    val n = sb.length // el número real de agentes es el de la creencia
+    Vector.tabulate(n) { i =>
+      val effectiveWeights = Vector.tabulate(n) { j =>
+        wg(i, j) * (1.0 - math.abs(sb(i) - sb(j)))
+      }
+      val totalWeight = effectiveWeights.sum
+      if (totalWeight == 0.0) sb(i)
+      else
+        effectiveWeights.zipWithIndex
+          .map { case (w, j) => w * sb(j) }
+          .sum / totalWeight
+    }
+  }
+  def  simulate(fu: FunctionUpdate,
+                swg: SpecificWeightedGraph,
+                b0: SpecificBelief,
+                t:Int):
+  IndexedSeq[SpecificBelief] ={
+    (1 to t).scanLeft(b0){(concurrentBelief,_) => fu(concurrentBelief,swg)}
+
   }
 
-  // Builds mildly polarized belief state
-  def midlyBelief(nags: Int): SpecificBelief = {
-    val middle = nags / 2
-    Vector.tabulate(nags)((i: Int) =>
-      if (i < middle) math.max(0.25 - 0.01 * (middle - i - 1), 0)
-      else math.min(0.75 - 0.01 * (middle - i), 1))
+  //Versiones Paralelas
+
+  def rhoPar(alpha: Double, beta: Double): AgentsPolMeasure ={
+
+    val medida = normalizar(rhoCMT_Gen(alpha, beta))
+    (sb: SpecificBelief, dist: DistributionValues) => {
+      val k = dist.length
+      val n = sb.length
+
+      val lims = Vector.tabulate(k) { i =>
+        if (i == 0) 0.0
+        else (dist(i - 1) + dist(i)) / 2.0
+      }
+
+      val indiceI = (0 until k).toVector
+
+      def calcularFrecuenciaGrupo(indices: Vector[Int]): Vector[Double] = indices.map {{ i =>
+        val lo = lims(i)
+        val hi = if (i == k - 1) 1.0 + 1e-9 else lims(i + 1)
+        sb.count(b => b >= lo && b < hi).toDouble / n.toDouble
+      }
+      }
+
+      val mitad = k/2
+
+      val(indicesP1, indicesP2) = indiceI.splitAt(mitad)
+
+      val(mitad1, mitad2) =common.parallel(
+        calcularFrecuenciaGrupo(indicesP1),
+        calcularFrecuenciaGrupo(indicesP2)
+      )
+
+      val freq: Frequency = mitad1 ++ mitad2
+
+      medida((freq, dist))
+    }
   }
 
-  // Builds extreme polarized belief state
-  def allExtremeBelief(nags: Int): SpecificBelief = {
-    val middle = nags / 2
-    Vector.tabulate(nags)((i: Int) =>
-      if (i < middle) 0.0 else 1.0)
-  }
+  // Versión paralela
+  def confBiasUpdatePar(b: SpecificBelief, swg: SpecificWeightedGraph): SpecificBelief = {
+    val (wg, _) = swg
+    val n = b.length
 
-  // Builds three-pole belief state
-  def allTripleBelief(nags: Int): SpecificBelief = {
-    val oneThird = nags / 3
-    val twoThird = (nags / 3) * 2
-    Vector.tabulate(nags)((i: Int) =>
-      if (i < oneThird) 0.0
-      else if (i >= twoThird) 1.0
-      else 0.5)
-  }
+    (0 until n).par.map { i =>
+      val effectiveWeights = (0 until n).par.map { j =>
+        wg(i, j) * (1.0 - math.abs(b(i) - b(j)))
+      }.toVector
 
-  // Builds consensus belief state
-  def consensusBelief(b: Double)(nags: Int): SpecificBelief = {
-    Vector.tabulate(nags)((i: Int) => b)
+      val totalWeight = effectiveWeights.sum
+      if (totalWeight == 0.0) b(i)
+      else
+        effectiveWeights.zipWithIndex
+          .map { case (w, j) => w * b(j) }
+          .sum / totalWeight
+    }.toVector
   }
 
 }
